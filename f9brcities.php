@@ -37,3 +37,5 @@ if ( ! class_exists( 'F9brcities' ) ) {
 function f9brcities() {
 	return F9brcities::instance();
 }
+
+f9brcities();

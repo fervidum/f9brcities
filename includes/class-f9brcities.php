@@ -45,10 +45,32 @@ final class F9brcities {
 	}
 
 	/**
+	 * F9brcities Constructor.
+	 */
+	public function __construct() {
+		$this->define_constants();
+		$this->includes();
+
+		do_action( 'f9brcities_loaded' );
+	}
+
+	/**
 	 * Define F9BRCITIES Constants.
 	 */
 	private function define_constants() {
 		$this->define( 'F9BRCITIES_ABSPATH', dirname( F9BRCITIES_PLUGIN_FILE ) . '/' );
+	}
+
+	/**
+	 * Define constant if not already set.
+	 *
+	 * @param string      $name  Constant name.
+	 * @param string|bool $value Constant value.
+	 */
+	private function define( $name, $value ) {
+		if ( ! defined( $name ) ) {
+			define( $name, $value );
+		}
 	}
 
 	/**

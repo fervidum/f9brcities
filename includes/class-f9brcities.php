@@ -43,4 +43,20 @@ final class F9brcities {
 		}
 		return self::$_instance;
 	}
+
+	/**
+	 * Define F9BRCITIES Constants.
+	 */
+	private function define_constants() {
+		$this->define( 'F9BRCITIES_ABSPATH', dirname( F9BRCITIES_PLUGIN_FILE ) . '/' );
+	}
+
+	/**
+	 * Include required core files used in admin and on the frontend.
+	 */
+	public function includes() {
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			include_once F9BRCITIES_ABSPATH . 'includes/class-f9brcities-cli.php';
+		}
+	}
 }

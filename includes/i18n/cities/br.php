@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$cities['BR']['52'] = array(
+$cities['BR']['GO'] = array(
 		'5200050' => __( 'Abadia de Goi&aacute;s', 'f9brcities' ),
 		'5200100' => __( 'Abadi&acirc;nia', 'f9brcities' ),
 		'5200134' => __( 'Acre&uacute;na', 'f9brcities' ),
@@ -262,7 +262,7 @@ $cities['BR']['52'] = array(
 		'5222203' => __( 'Vila Boa', 'f9brcities' ),
 		'5222302' => __( 'Vila Prop&iacute;cio', 'f9brcities' ),
 ),
-$cities['BR']['31'] = array(
+$cities['BR']['MG'] = array(
 		'3100104' => __( 'Abadia dos Dourados', 'f9brcities' ),
 		'3100203' => __( 'Abaet&eacute;', 'f9brcities' ),
 		'3100302' => __( 'Abre Campo', 'f9brcities' ),
@@ -1117,7 +1117,7 @@ $cities['BR']['31'] = array(
 		'3172103' => __( 'Volta Grande', 'f9brcities' ),
 		'3172202' => __( 'Wenceslau Braz', 'f9brcities' ),
 ),
-$cities['BR']['15'] = array(
+$cities['BR']['PA'] = array(
 		'1500107' => __( 'Abaetetuba', 'f9brcities' ),
 		'1500131' => __( 'Abel Figueiredo', 'f9brcities' ),
 		'1500206' => __( 'Acar&aacute;', 'f9brcities' ),
@@ -1263,7 +1263,7 @@ $cities['BR']['15'] = array(
 		'1508357' => __( 'Vit&oacute;ria do Xingu', 'f9brcities' ),
 		'1508407' => __( 'Xinguara', 'f9brcities' ),
 ),
-$cities['BR']['23'] = array(
+$cities['BR']['CE'] = array(
 		'2300101' => __( 'Abaiara', 'f9brcities' ),
 		'2300150' => __( 'Acarape', 'f9brcities' ),
 		'2300200' => __( 'Acara&uacute;', 'f9brcities' ),
@@ -1449,7 +1449,7 @@ $cities['BR']['23'] = array(
 		'2314003' => __( 'V&aacute;rzea Alegre', 'f9brcities' ),
 		'2314102' => __( 'Vi&ccedil;osa do Cear&aacute;', 'f9brcities' ),
 ),
-$cities['BR']['29'] = array(
+$cities['BR']['BA'] = array(
 		'2900108' => __( 'Aba&iacute;ra', 'f9brcities' ),
 		'2900207' => __( 'Abar&eacute;', 'f9brcities' ),
 		'2900306' => __( 'Acajutiba', 'f9brcities' ),
@@ -1868,7 +1868,7 @@ $cities['BR']['29'] = array(
 		'2933505' => __( 'Wenceslau Guimar&atilde;es', 'f9brcities' ),
 		'2933604' => __( 'Xique-Xique', 'f9brcities' ),
 ),
-$cities['BR']['41'] = array(
+$cities['BR']['PR'] = array(
 		'4100103' => __( 'Abati&aacute;', 'f9brcities' ),
 		'4100202' => __( 'Adrian&oacute;polis', 'f9brcities' ),
 		'4100301' => __( 'Agudos do Sul', 'f9brcities' ),
@@ -2269,7 +2269,7 @@ $cities['BR']['41'] = array(
 		'4128500' => __( 'Wenceslau Braz', 'f9brcities' ),
 		'4128807' => __( 'Xambr&ecirc;', 'f9brcities' ),
 ),
-$cities['BR']['42'] = array(
+$cities['BR']['SC'] = array(
 		'4200051' => __( 'Abdon Batista', 'f9brcities' ),
 		'4200101' => __( 'Abelardo Luz', 'f9brcities' ),
 		'4200200' => __( 'Agrol&acirc;ndia', 'f9brcities' ),
@@ -2566,7 +2566,7 @@ $cities['BR']['42'] = array(
 		'4219705' => __( 'Xaxim', 'f9brcities' ),
 		'4219853' => __( 'Zort&eacute;a', 'f9brcities' ),
 ),
-$cities['BR']['26'] = array(
+$cities['BR']['PE'] = array(
 		'2600054' => __( 'Abreu e Lima', 'f9brcities' ),
 		'2600104' => __( 'Afogados da Ingazeira', 'f9brcities' ),
 		'2600203' => __( 'Afr&acirc;nio', 'f9brcities' ),
@@ -2753,7 +2753,7 @@ $cities['BR']['26'] = array(
 		'2616407' => __( 'Vit&oacute;ria de Santo Ant&atilde;o', 'f9brcities' ),
 		'2616506' => __( 'Xex&eacute;u', 'f9brcities' ),
 ),
-$cities['BR']['17'] = array(
+$cities['BR']['TO'] = array(
 		'1700251' => __( 'Abreul&acirc;ndia', 'f9brcities' ),
 		'1700301' => __( 'Aguiarn&oacute;polis', 'f9brcities' ),
 		'1700350' => __( 'Alian&ccedil;a do Tocantins', 'f9brcities' ),
@@ -2894,7 +2894,7 @@ $cities['BR']['17'] = array(
 		'1722081' => __( 'Wanderl&acirc;ndia', 'f9brcities' ),
 		'1722107' => __( 'Xambio&aacute;', 'f9brcities' ),
 ),
-$cities['BR']['21'] = array(
+$cities['BR']['MA'] = array(
 		'2100055' => __( 'A&ccedil;ail&acirc;ndia', 'f9brcities' ),
 		'2100105' => __( 'Afonso Cunha', 'f9brcities' ),
 		'2100154' => __( '&Aacute;gua Doce do Maranh&atilde;o', 'f9brcities' ),
@@ -3113,7 +3113,7 @@ $cities['BR']['21'] = array(
 		'2113009' => __( 'Vitorino Freire', 'f9brcities' ),
 		'2114007' => __( 'Z&eacute; Doca', 'f9brcities' ),
 ),
-$cities['BR']['24'] = array(
+$cities['BR']['RN'] = array(
 		'2400109' => __( 'Acari', 'f9brcities' ),
 		'2400208' => __( 'A&ccedil;u', 'f9brcities' ),
 		'2400307' => __( 'Afonso Bezerra', 'f9brcities' ),
@@ -3282,7 +3282,7 @@ $cities['BR']['24'] = array(
 		'2414902' => __( 'Vi&ccedil;osa', 'f9brcities' ),
 		'2415008' => __( 'Vila Flor', 'f9brcities' ),
 ),
-$cities['BR']['22'] = array(
+$cities['BR']['PI'] = array(
 		'2200053' => __( 'Acau&atilde;', 'f9brcities' ),
 		'2200103' => __( 'Agricol&acirc;ndia', 'f9brcities' ),
 		'2200202' => __( '&Aacute;gua Branca', 'f9brcities' ),
@@ -3508,7 +3508,7 @@ $cities['BR']['22'] = array(
 		'2211605' => __( 'Vila Nova do Piau&iacute;', 'f9brcities' ),
 		'2211704' => __( 'Wall Ferraz', 'f9brcities' ),
 ),
-$cities['BR']['43'] = array(
+$cities['BR']['RS'] = array(
 		'4300034' => __( 'Acegu&aacute;', 'f9brcities' ),
 		'4300059' => __( '&Aacute;gua Santa', 'f9brcities' ),
 		'4300109' => __( 'Agudo', 'f9brcities' ),
@@ -4007,7 +4007,7 @@ $cities['BR']['43'] = array(
 		'4323770' => __( 'Westf&aacute;lia', 'f9brcities' ),
 		'4323804' => __( 'Xangri-l&aacute;', 'f9brcities' ),
 ),
-$cities['BR']['51'] = array(
+$cities['BR']['MT'] = array(
 		'5100102' => __( 'Acorizal', 'f9brcities' ),
 		'5100201' => __( '&Aacute;gua Boa', 'f9brcities' ),
 		'5100250' => __( 'Alta Floresta', 'f9brcities' ),
@@ -4150,7 +4150,7 @@ $cities['BR']['51'] = array(
 		'5105507' => __( 'Vila Bela da Sant&iacute;ssima Trindade', 'f9brcities' ),
 		'5108600' => __( 'Vila Rica', 'f9brcities' ),
 ),
-$cities['BR']['12'] = array(
+$cities['BR']['AC'] = array(
 		'1200013' => __( 'Acrel&acirc;ndia', 'f9brcities' ),
 		'1200054' => __( 'Assis Brasil', 'f9brcities' ),
 		'1200104' => __( 'Brasil&eacute;ia', 'f9brcities' ),
@@ -4174,7 +4174,7 @@ $cities['BR']['12'] = array(
 		'1200609' => __( 'Tarauac&aacute;', 'f9brcities' ),
 		'1200708' => __( 'Xapuri', 'f9brcities' ),
 ),
-$cities['BR']['35'] = array(
+$cities['BR']['SP'] = array(
 		'3500105' => __( 'Adamantina', 'f9brcities' ),
 		'3500204' => __( 'Adolfo', 'f9brcities' ),
 		'3500303' => __( 'Agua&iacute;', 'f9brcities' ),
@@ -4821,7 +4821,7 @@ $cities['BR']['35'] = array(
 		'3557105' => __( 'Votuporanga', 'f9brcities' ),
 		'3557154' => __( 'Zacarias', 'f9brcities' ),
 ),
-$cities['BR']['32'] = array(
+$cities['BR']['ES'] = array(
 		'3200102' => __( 'Afonso Cl&aacute;udio', 'f9brcities' ),
 		'3200169' => __( '&Aacute;gua Doce do Norte', 'f9brcities' ),
 		'3200136' => __( '&Aacute;guia Branca', 'f9brcities' ),
@@ -4901,7 +4901,7 @@ $cities['BR']['32'] = array(
 		'3205200' => __( 'Vila Velha', 'f9brcities' ),
 		'3205309' => __( 'Vit&oacute;ria', 'f9brcities' ),
 ),
-$cities['BR']['27'] = array(
+$cities['BR']['AL'] = array(
 		'2700102' => __( '&Aacute;gua Branca', 'f9brcities' ),
 		'2700201' => __( 'Anadia', 'f9brcities' ),
 		'2700300' => __( 'Arapiraca', 'f9brcities' ),
@@ -5005,7 +5005,7 @@ $cities['BR']['27'] = array(
 		'2709301' => __( 'Uni&atilde;o dos Palmares', 'f9brcities' ),
 		'2709400' => __( 'Vi&ccedil;osa', 'f9brcities' ),
 ),
-$cities['BR']['25'] = array(
+$cities['BR']['PB'] = array(
 		'2500106' => __( '&Aacute;gua Branca', 'f9brcities' ),
 		'2500205' => __( 'Aguiar', 'f9brcities' ),
 		'2500304' => __( 'Alagoa Grande', 'f9brcities' ),
@@ -5230,7 +5230,7 @@ $cities['BR']['25'] = array(
 		'2505501' => __( 'Vista Serrana', 'f9brcities' ),
 		'2517407' => __( 'Zabel&ecirc;', 'f9brcities' ),
 ),
-$cities['BR']['50'] = array(
+$cities['BR']['MS'] = array(
 		'5000203' => __( '&Aacute;gua Clara', 'f9brcities' ),
 		'5000252' => __( 'Alcin&oacute;polis', 'f9brcities' ),
 		'5000609' => __( 'Amambai', 'f9brcities' ),
@@ -5311,7 +5311,7 @@ $cities['BR']['50'] = array(
 		'5008305' => __( 'Tr&ecirc;s Lagoas', 'f9brcities' ),
 		'5008404' => __( 'Vicentina', 'f9brcities' ),
 ),
-$cities['BR']['11'] = array(
+$cities['BR']['RO'] = array(
 		'1100015' => __( 'Alta Floresta D&#039;Oeste', 'f9brcities' ),
 		'1100379' => __( 'Alto Alegre dos Parecis', 'f9brcities' ),
 		'1100403' => __( 'Alto Para&iacute;so', 'f9brcities' ),
@@ -5365,7 +5365,7 @@ $cities['BR']['11'] = array(
 		'1101807' => __( 'Vale do Para&iacute;so', 'f9brcities' ),
 		'1100304' => __( 'Vilhena', 'f9brcities' ),
 ),
-$cities['BR']['14'] = array(
+$cities['BR']['RR'] = array(
 		'1400050' => __( 'Alto Alegre', 'f9brcities' ),
 		'1400027' => __( 'Amajari', 'f9brcities' ),
 		'1400100' => __( 'Boa Vista', 'f9brcities' ),
@@ -5382,7 +5382,7 @@ $cities['BR']['14'] = array(
 		'1400605' => __( 'S&atilde;o Luiz', 'f9brcities' ),
 		'1400704' => __( 'Uiramut&atilde;', 'f9brcities' ),
 ),
-$cities['BR']['13'] = array(
+$cities['BR']['AM'] = array(
 		'1300029' => __( 'Alvar&atilde;es', 'f9brcities' ),
 		'1300060' => __( 'Amatur&aacute;', 'f9brcities' ),
 		'1300086' => __( 'Anam&atilde;', 'f9brcities' ),
@@ -5446,7 +5446,7 @@ $cities['BR']['13'] = array(
 		'1304302' => __( 'Urucar&aacute;', 'f9brcities' ),
 		'1304401' => __( 'Urucurituba', 'f9brcities' ),
 ),
-$cities['BR']['16'] = array(
+$cities['BR']['AP'] = array(
 		'1600105' => __( 'Amap&aacute;', 'f9brcities' ),
 		'1600204' => __( 'Cal&ccedil;oene', 'f9brcities' ),
 		'1600212' => __( 'Cutias', 'f9brcities' ),
@@ -5464,7 +5464,7 @@ $cities['BR']['16'] = array(
 		'1600709' => __( 'Tartarugalzinho', 'f9brcities' ),
 		'1600808' => __( 'Vit&oacute;ria do Jari', 'f9brcities' ),
 ),
-$cities['BR']['28'] = array(
+$cities['BR']['SE'] = array(
 		'2800100' => __( 'Amparo de S&atilde;o Francisco', 'f9brcities' ),
 		'2800209' => __( 'Aquidab&atilde;', 'f9brcities' ),
 		'2800308' => __( 'Aracaju', 'f9brcities' ),
@@ -5541,7 +5541,7 @@ $cities['BR']['28'] = array(
 		'2807501' => __( 'Tomar do Geru', 'f9brcities' ),
 		'2807600' => __( 'Umba&uacute;ba', 'f9brcities' ),
 ),
-$cities['BR']['33'] = array(
+$cities['BR']['RJ'] = array(
 		'3300100' => __( 'Angra dos Reis', 'f9brcities' ),
 		'3300159' => __( 'Aperib&eacute;', 'f9brcities' ),
 		'3300209' => __( 'Araruama', 'f9brcities' ),
@@ -5635,6 +5635,6 @@ $cities['BR']['33'] = array(
 		'3306206' => __( 'Vassouras', 'f9brcities' ),
 		'3306305' => __( 'Volta Redonda', 'f9brcities' ),
 ),
-$cities['BR']['53'] = array(
+$cities['BR']['DF'] = array(
 		'5300108' => __( 'Bras&iacute;lia', 'f9brcities' ),
 );

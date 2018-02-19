@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class F9BRCITIES_CLI_Runner {
 
 	/**
+	 * UFs code and abbr.
+	 *
+	 * @var array
+	 */
+	public static $ufs = array();
+
+	/**
 	 * Register's function as commands once WP and F9BRCITIES have all loaded.
 	 */
 	public static function after_wp_load() {
@@ -29,9 +36,9 @@ class F9BRCITIES_CLI_Runner {
 	}
 
 	/**
-	 * Generates file of brazilian cities.
+	 * Get js data of file or transient.
 	 */
-	public static function generate() {
+	public static function get_js_data() {
 
 		// Check for transient, if none, grab remote JS file.
 		if ( false === ( $js = get_transient( 'ibge_remote_js' ) ) ) {
@@ -57,19 +64,85 @@ class F9BRCITIES_CLI_Runner {
 
 		}
 
-		error_log( "test\n", 3, dirname( ABSPATH ) . '/brcities.log' );
-		preg_match( '/i\.municipios=\[([^\]]+)]/', $js, $matches );
+		return $js;
+	}
+
+	/**
+	 * Set array state of code state and abbr.
+	 */
+	private static function set_ufs() {
+
+		preg_match( '/i\.ufs=\[([^\]]+)]/', self::get_js_data(), $matches );
+	}
+
+	/**
+	 * Split false json objects.
+	 */
+	private static function json_items( $var ) {
+
+		$output = array();
+
+		if ( false !== ( $group = self::get_group( $var ) ) ) {
+			preg_match_all( '/{[^}]+}/', $group, $matches );
+			$output = $matches[0];
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Split false objects json.
+	 */
+	private static function get_group( $var ) {
+
+		preg_match( "/i\.$var=\[([^\]]+)]/", self::get_js_data(), $matches );
+
+		$output = false;
 
 		if ( count( $matches ) > 1 ) {
-			preg_match_all( '/{[^}]+}/', $matches[1], $matches );
-			$json_items = $matches[0];
+			$output = $matches[1];
+		}
+		return $output;
+	}
+
+	/**
+	 * Turn false json to array.
+	 */
+	private static function json_to_aray( $false_json ) {
+		$real_json = preg_replace( '/([a-zA-Z]+):/', '"$1":', $false_json );
+		$output = (object) json_decode( $real_json );
+		return $output;
+	}
+
+	/**
+	 * Turn false json to array.
+	 */
+	private static function get_uf( $uf_code ) {
+		if ( empty( self::$ufs ) ) {
+			if ( false !== ( $items = self::json_items( 'ufs' ) ) ) {
+				$ufs = array();
+				foreach ( $items as $json_item ) {
+					$uf = self::json_to_aray( $json_item );
+					self::$ufs[ $uf->codigo ] = $uf->sigla;
+				}
+			}
+		}
+		return self::$ufs[ $uf_code ];
+	}
+
+	/**
+	 * Generates file of brazilian cities.
+	 */
+	public static function generate() {
+
+		if ( false !== ( $items = self::json_items( 'municipios' ) ) ) {
 
 			$brcities = array();
 
-			foreach ( $json_items as $json_item ) {
-				$json_item = preg_replace( '/([a-zA-Z]+):/', '"$1":', $json_item );
-				$city = (object) json_decode( $json_item );
-				$brcities[ $city->codigoUf ][ $city->codigo ] = $city->nome;
+			foreach ( $items as $json_item ) {
+				$city = self::json_to_aray( $json_item );
+				$uf = self::get_uf( $city->codigoUf );
+				$brcities[ $uf ][ $city->codigo ] = $city->nome;
 			}
 		}
 
@@ -105,13 +178,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 
 		$path = F9BRCITIES_ABSPATH . 'includes/i18n/cities/';
-		if ( ! mkdir( $path, 0755, true ) ) {
-			WP_CLI::error( 'Failed to create folder.' );
+		if ( ! file_exists ( $path ) ) {
+			if ( ! mkdir( $path, 0755, true ) ) {
+				WP_CLI::error( 'Failed to create folder.' );
+			}
 		}
 
 		$file = F9BRCITIES_ABSPATH . 'includes/i18n/cities/br.php';
 		file_put_contents( $file, ob_get_clean() );
 
-		WP_CLI::success( 'File generated.' );
+		die;//WP_CLI::success( 'File generated.' );
 	}
 }

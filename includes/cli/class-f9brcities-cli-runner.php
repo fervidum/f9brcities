@@ -41,7 +41,8 @@ class F9BRCITIES_CLI_Runner {
 	public static function get_js_data() {
 
 		// Check for transient, if none, grab remote JS file.
-		if ( false === ( $js = get_transient( 'ibge_remote_js' ) ) ) {
+		$js = get_transient( 'ibge_remote_js' );
+		if ( false === $js ) {
 
 			// Get remote JS file.
 			$response = wp_remote_get( 'https://cidades.ibge.gov.br/dist/main-client.js' );
@@ -82,7 +83,8 @@ class F9BRCITIES_CLI_Runner {
 
 		$output = array();
 
-		if ( false !== ( $group = self::get_group( $var ) ) ) {
+		$group = self::get_group( $var );
+		if ( false !== $group ) {
 			preg_match_all( '/{[^}]+}/', $group, $matches );
 			$output = $matches[0];
 		}
@@ -95,7 +97,7 @@ class F9BRCITIES_CLI_Runner {
 	 */
 	private static function get_group( $var ) {
 
-		preg_match( "/i\.$var=\[([^\]]+)]/", self::get_js_data(), $matches );
+		preg_match( "/\.$var\s*=\s*\[([^\]]+)]/im", self::get_js_data(), $matches );
 
 		$output = false;
 
@@ -119,7 +121,8 @@ class F9BRCITIES_CLI_Runner {
 	 */
 	private static function get_uf( $uf_code ) {
 		if ( empty( self::$ufs ) ) {
-			if ( false !== ( $items = self::json_items( 'ufs' ) ) ) {
+			$items = self::json_items( 'ufs' );
+			if ( false !== $items ) {
 				$ufs = array();
 				foreach ( $items as $json_item ) {
 					$uf = self::json_to_aray( $json_item );
@@ -131,62 +134,128 @@ class F9BRCITIES_CLI_Runner {
 	}
 
 	/**
-	 * Generates file of brazilian cities.
+	 * Generates file of brazilian states and cities.
 	 */
 	public static function generate() {
+		self::generate_states();
+		self::generate_cities();
 
-		if ( false !== ( $items = self::json_items( 'municipios' ) ) ) {
+		WP_CLI::success( 'Files generated.' );
+	}
 
-			$brcities = array();
+	/**
+	 * Generates file of brazilian states.
+	 */
+	public static function generate_states() {
+
+		$items = self::json_items( 'ufs' );
+
+		if ( false !== $items ) {
+
+			$brstates = array();
 
 			foreach ( $items as $json_item ) {
-				$city = self::json_to_aray( $json_item );
-				$uf = self::get_uf( $city->codigoUf );
-				$brcities[ $uf ][ $city->codigo ] = $city->nome;
+				$state = self::json_to_aray( $json_item );
+				$brstates[ sanitize_title( $state->nome ) ] = (Object) array(
+					'abbr' => $state->sigla,
+					'name' => $state->nome,
+				);
 			}
+			ksort( $brstates );
 		}
 
 		ob_start();
+		// @codingStandardsIgnoreStart
 		?>
 <?php echo chr( 60 ); ?>?php
 /**
- * Brazillian cities
+ * Brazillian states
  *
- * @author      Fervidum
- * @category    i18n
- * @package     F9brcities/i18n
- * @version     1.0.0
+ * @package F9brcities/i18n
+ * @version 1.0.0
  */
 
-global $cities;
+global $state;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 <?php
-		foreach ( $brcities as $state_cod => $state_cities ) {
-			printf( "\n\$cities['BR']['%s'] = array(\n", $state_cod );
-
-			foreach ( $state_cities as $city_cod => $city ) {
-				printf( "\t\t'%s' => __( '%s', 'f9brcities' ),\n", $city_cod, htmlentities2( $city ) );
-			}
-			if ( $state_cities !== end( $brcities ) ) {
-				echo '),';
-			} else {
-				echo ");\n";
-			}
+		// @codingStandardsIgnoreEnd
+		printf( "\n\$states['BR'] = array(\n" );
+		foreach ( $brstates as $state ) {
+			printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", $state->abbr, htmlentities2( $state->name ) );
 		}
+		echo ");\n";
 
-		$path = F9BRCITIES_ABSPATH . 'includes/i18n/cities/';
-		if ( ! file_exists ( $path ) ) {
+		$path = F9BRCITIES_ABSPATH . 'i18n/states/';
+		if ( ! file_exists( $path ) ) {
 			if ( ! mkdir( $path, 0755, true ) ) {
 				WP_CLI::error( 'Failed to create folder.' );
 			}
 		}
 
-		$file = F9BRCITIES_ABSPATH . 'includes/i18n/cities/br.php';
+		$file = F9BRCITIES_ABSPATH . 'i18n/states/br.php';
 		file_put_contents( $file, ob_get_clean() );
+	}
 
-		die;//WP_CLI::success( 'File generated.' );
+	/**
+	 * Generates file of brazilian cities.
+	 */
+	public static function generate_cities() {
+
+		$items = self::json_items( 'municipios' );
+		if ( false !== $items ) {
+
+			$brcities = array();
+
+			foreach ( $items as $json_item ) {
+				$city = self::json_to_aray( $json_item );
+				$uf = self::get_uf( $city->codigoUf ); // @codingStandardsIgnoreLine
+				$brcities[ $uf ][ sanitize_title( $city->nome ) ] = (Object) array(
+					'code' => $city->codigo,
+					'name' => $city->nome,
+				);
+			}
+			ksort( $brcities[ $uf ] );
+		}
+		ksort( $brcities );
+
+		ob_start();
+		// @codingStandardsIgnoreStart
+		?>
+<?php echo chr( 60 ); ?>?php
+/**
+ * Brazillian cities
+ *
+ * @package F9brcities/i18n
+ * @version 1.0.0
+ */
+
+global $cities;
+
+defined( 'ABSPATH' ) || exit;
+<?php
+		// @codingStandardsIgnoreEnd
+		foreach ( $brcities as $state_cod => $state_cities ) {
+			printf( "\n\$cities['BR']['%s'] = array(\n", $state_cod );
+
+			foreach ( $state_cities as $city ) {
+				printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", $city->code, htmlentities2( $city->name ) );
+			}
+			if ( end( $brcities ) !== $state_cities ) {
+				echo ');';
+			} else {
+				echo ");\n";
+			}
+		}
+
+		$path = F9BRCITIES_ABSPATH . 'i18n/cities/';
+		if ( ! file_exists( $path ) ) {
+			if ( ! mkdir( $path, 0755, true ) ) {
+				WP_CLI::error( 'Failed to create folder.' );
+			}
+		}
+
+		$file = F9BRCITIES_ABSPATH . 'i18n/cities/br.php';
+		file_put_contents( $file, ob_get_clean() );
 	}
 }

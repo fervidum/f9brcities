@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+	<description>Sniffs for WordPress code</description>
+
+	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs"/>
+
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.Formatting.MultipleStatementAlignment"/>
+		<exclude name="Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace"/>
+		<exclude name="Squiz.PHP.EmbeddedPhp"/>
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment"/>
+	</rule>
+
+	<!-- Check all PHP files in directory tree by default. -->
+	<arg name="extensions" value="php"/>
+	<file>.</file>
+
+	<!-- Show progress and sniff codes in all reports -->
+	<arg value="ps"/>
+
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+</ruleset>

@@ -1,8 +1,11 @@
 <?php
+/**
+ * F9brcities cli runner
+ *
+ * @package f9brcities
+ */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * F9BRCITIES to WC CLI Bridge.
@@ -78,6 +81,8 @@ class F9BRCITIES_CLI_Runner {
 
 	/**
 	 * Split false json objects.
+	 *
+	 * @param string $var Variable.
 	 */
 	private static function json_items( $var ) {
 
@@ -94,6 +99,8 @@ class F9BRCITIES_CLI_Runner {
 
 	/**
 	 * Split false objects json.
+	 *
+	 * @param string $var Variable.
 	 */
 	private static function get_group( $var ) {
 
@@ -109,15 +116,19 @@ class F9BRCITIES_CLI_Runner {
 
 	/**
 	 * Turn false json to array.
+	 *
+	 * @param string $false_json False json.
 	 */
 	private static function json_to_aray( $false_json ) {
 		$real_json = preg_replace( '/([a-zA-Z]+):/', '"$1":', $false_json );
-		$output = (object) json_decode( $real_json );
+		$output    = (object) json_decode( $real_json );
 		return $output;
 	}
 
 	/**
 	 * Turn false json to array.
+	 *
+	 * @param string $uf_code UF code.
 	 */
 	private static function get_uf( $uf_code ) {
 		if ( empty( self::$ufs ) ) {
@@ -125,7 +136,7 @@ class F9BRCITIES_CLI_Runner {
 			if ( false !== $items ) {
 				$ufs = array();
 				foreach ( $items as $json_item ) {
-					$uf = self::json_to_aray( $json_item );
+					$uf                       = self::json_to_aray( $json_item );
 					self::$ufs[ $uf->codigo ] = $uf->sigla;
 				}
 			}
@@ -147,6 +158,7 @@ class F9BRCITIES_CLI_Runner {
 	 * Generates file of brazilian states.
 	 */
 	public static function generate_states() {
+		global $wp_filesystem;
 
 		$items = self::json_items( 'ufs' );
 
@@ -156,7 +168,8 @@ class F9BRCITIES_CLI_Runner {
 
 			foreach ( $items as $json_item ) {
 				$state = self::json_to_aray( $json_item );
-				$brstates[ sanitize_title( $state->nome ) ] = (Object) array(
+
+				$brstates[ sanitize_title( $state->nome ) ] = (object) array(
 					'abbr' => $state->sigla,
 					'name' => $state->nome,
 				);
@@ -165,9 +178,7 @@ class F9BRCITIES_CLI_Runner {
 		}
 
 		ob_start();
-		// @codingStandardsIgnoreStart
-		?>
-<?php echo chr( 60 ); ?>?php
+		echo '<?php
 /**
  * Brazillian states
  *
@@ -177,30 +188,39 @@ class F9BRCITIES_CLI_Runner {
 
 global $state;
 
-defined( 'ABSPATH' ) || exit;
-<?php
-		// @codingStandardsIgnoreEnd
+defined( \'ABSPATH\' ) || exit;
+';
+
 		printf( "\n\$states['BR'] = array(\n" );
 		foreach ( $brstates as $state ) {
-			printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", $state->abbr, htmlentities2( $state->name ) );
+			printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", esc_html( $state->abbr ), esc_html( htmlentities2( $state->name ) ) );
 		}
 		echo ");\n";
 
-		$path = F9BRCITIES_ABSPATH . 'i18n/states/';
-		if ( ! file_exists( $path ) ) {
-			if ( ! mkdir( $path, 0755, true ) ) {
-				WP_CLI::error( 'Failed to create folder.' );
-			}
+		$path = F9BRCITIES_ABSPATH . 'i18n/';
+
+		if ( ! $wp_filesystem->is_dir( $path ) ) {
+			$wp_filesystem->mkdir( $path );
 		}
 
-		$file = F9BRCITIES_ABSPATH . 'i18n/states/br.php';
-		file_put_contents( $file, ob_get_clean() );
+		$path = $path . 'states/';
+
+		if ( ! $wp_filesystem->is_dir( $path ) ) {
+			$wp_filesystem->mkdir( $path );
+		}
+
+		$file = $path . 'br.php';
+		$wp_filesystem->put_contents(
+			$file,
+			ob_get_clean()
+		);
 	}
 
 	/**
 	 * Generates file of brazilian cities.
 	 */
 	public static function generate_cities() {
+		global $wp_filesystem;
 
 		$items = self::json_items( 'municipios' );
 		if ( false !== $items ) {
@@ -209,8 +229,9 @@ defined( 'ABSPATH' ) || exit;
 
 			foreach ( $items as $json_item ) {
 				$city = self::json_to_aray( $json_item );
-				$uf = self::get_uf( $city->codigoUf ); // @codingStandardsIgnoreLine
-				$brcities[ $uf ][ sanitize_title( $city->nome ) ] = (Object) array(
+				$uf   = self::get_uf( $city->codigoUf ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+				$brcities[ $uf ][ sanitize_title( $city->nome ) ] = (object) array(
 					'code' => $city->codigo,
 					'name' => $city->nome,
 				);
@@ -220,9 +241,7 @@ defined( 'ABSPATH' ) || exit;
 		ksort( $brcities );
 
 		ob_start();
-		// @codingStandardsIgnoreStart
-		?>
-<?php echo chr( 60 ); ?>?php
+		echo '<?php
 /**
  * Brazillian cities
  *
@@ -232,14 +251,14 @@ defined( 'ABSPATH' ) || exit;
 
 global $cities;
 
-defined( 'ABSPATH' ) || exit;
-<?php
-		// @codingStandardsIgnoreEnd
+defined( \'ABSPATH\' ) || exit;
+';
+
 		foreach ( $brcities as $state_cod => $state_cities ) {
-			printf( "\n\$cities['BR']['%s'] = array(\n", $state_cod );
+			printf( "\n\$cities['BR']['%s'] = array(\n", esc_html( $state_cod ) );
 
 			foreach ( $state_cities as $city ) {
-				printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", $city->code, htmlentities2( $city->name ) );
+				printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", esc_html( $city->code ), esc_html( htmlentities2( $city->name ) ) );
 			}
 			if ( end( $brcities ) !== $state_cities ) {
 				echo ');';
@@ -248,14 +267,22 @@ defined( 'ABSPATH' ) || exit;
 			}
 		}
 
-		$path = F9BRCITIES_ABSPATH . 'i18n/cities/';
-		if ( ! file_exists( $path ) ) {
-			if ( ! mkdir( $path, 0755, true ) ) {
-				WP_CLI::error( 'Failed to create folder.' );
-			}
+		$path = F9BRCITIES_ABSPATH . 'i18n/';
+
+		if ( ! $wp_filesystem->is_dir( $path ) ) {
+			$wp_filesystem->mkdir( $path );
 		}
 
-		$file = F9BRCITIES_ABSPATH . 'i18n/cities/br.php';
-		file_put_contents( $file, ob_get_clean() );
+		$path = $path . 'cities/';
+
+		if ( ! $wp_filesystem->is_dir( $path ) ) {
+			$wp_filesystem->mkdir( $path );
+		}
+
+		$file = $path . 'br.php';
+		$wp_filesystem->put_contents(
+			$file,
+			ob_get_clean()
+		);
 	}
 }

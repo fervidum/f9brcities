@@ -2,7 +2,7 @@
 /**
  * F9brcities setup
  *
- * @package  WooCommerce
+ * @package f9brcities
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -26,7 +26,7 @@ final class F9brcities {
 	 *
 	 * @var F9brcities
 	 */
-	protected static $_instance = null;
+	protected static $instance = null;
 
 	/**
 	 * Main F9brcities Instance.
@@ -38,16 +38,17 @@ final class F9brcities {
 	 * @return F9brcities - Main instance.
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
 	 * F9brcities Constructor.
 	 */
 	public function __construct() {
+		$this->filesystem();
 		$this->define_constants();
 		$this->includes();
 
@@ -55,10 +56,33 @@ final class F9brcities {
 	}
 
 	/**
+	 * Define global filesystem.
+	 */
+	public function filesystem() {
+		if ( ! function_exists( 'get_filesystem_method' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		if ( 'direct' === get_filesystem_method() ) {
+			$creds = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, array() );
+
+			if ( ! WP_Filesystem( $creds ) ) {
+				return false;
+			}
+
+			global $wp_filesystem;
+
+		}
+	}
+
+	/**
 	 * Define F9BRCITIES Constants.
 	 */
 	private function define_constants() {
-		$this->define( 'F9BRCITIES_ABSPATH', dirname( F9BRCITIES_PLUGIN_FILE ) . '/' );
+		global $wp_filesystem;
+
+		$this->define( 'F9BRCITIES_PLUGIN_DIR', plugin_dir_path( F9BRCITIES_PLUGIN_FILE ) );
+		$this->define( 'F9BRCITIES_ABSPATH', str_replace( ABSPATH, $wp_filesystem->abspath(), F9BRCITIES_PLUGIN_DIR ) );
 	}
 
 	/**

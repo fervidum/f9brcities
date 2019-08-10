@@ -1,7 +1,11 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+/**
+ * F9brcities cli
+ *
+ * @package f9brcities
+ */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Enables F9brcities, via the the command line.
@@ -10,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package F9brcities
  * @author  F9brcities
  */
-class F9BRCITIES_CLI {
+class F9brcities_CLI {
 	/**
 	 * Load required files and hooks to make the CLI work.
 	 */
@@ -34,4 +38,4 @@ class F9BRCITIES_CLI {
 	}
 }
 
-new F9BRCITIES_CLI;
+new F9brcities_CLI();

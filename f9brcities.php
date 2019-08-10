@@ -24,7 +24,7 @@ if ( ! defined( 'F9BRCITIES_PLUGIN_FILE' ) ) {
 
 // Include the main F9brcities class.
 if ( ! class_exists( 'F9brcities' ) ) {
-	include_once dirname( __FILE__ ) . '/includes/class-f9brcities.php';
+	include_once dirname( F9BRCITIES_PLUGIN_FILE ) . '/includes/class-f9brcities.php';
 }
 
 /**

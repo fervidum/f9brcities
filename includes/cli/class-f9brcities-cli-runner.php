@@ -38,6 +38,7 @@ class F9BRCITIES_CLI_Runner {
 		$commands = array(
 			'generate',
 			'cep-ranges',
+			'cities-count',
 		);
 
 		foreach ( $commands as $command ) {
@@ -295,6 +296,63 @@ defined( \'ABSPATH\' ) || exit;
 	}
 
 	/**
+	 * Get data of remote or transient.
+	 *
+	 * @param string $uf State code.
+	 * @param string $city City name.
+	 */
+	public static function get_cep_range_data( $uf, $city ) {
+		$city = html_entity_decode( $city );
+
+		$slug = str_replace( '-', '', sanitize_title( $uf . $city ) );
+
+		// Check for transient, if none, grab remote.
+		delete_transient( 'ect_remote_' . $slug );
+		$tables = get_transient( 'ect_remote_' . $slug );
+		if ( false === $tables ) {
+
+			// Get remote body.
+			$response = wp_remote_post(
+				'http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaFaixaCEP.cfm',
+				array(
+					'timeout' => 45,
+					'body'    => array(
+						'UF'         => $uf,
+						'Localidade' => utf8_decode( $city ),
+					),
+				)
+			);
+
+			// Check for error.
+			if ( is_wp_error( $response ) ) {
+				return;
+			}
+
+			// Parse remote body.
+			$body = wp_remote_retrieve_body( $response );
+
+			// Check for error.
+			if ( is_wp_error( $body ) ) {
+				return;
+			}
+
+			$tables = join( '', self::extract_tables( $body ) );
+
+			// Store remote tables on body in transient, expire after 24 hours.
+			set_transient( 'ect_remote_' . $slug, $tables, 24 * HOUR_IN_SECONDS );
+		}
+
+		if ( $tables ) {
+			preg_match_all( '#<table[^>]*>.*?</table>#', $tables, $tables );
+			$tables = current( $tables );
+		} else {
+			$tables = array();
+		}
+
+		return $tables;
+	}
+
+	/**
 	 * Cleanup table.
 	 *
 	 * @param  string $table Table HTML.
@@ -331,7 +389,7 @@ defined( \'ABSPATH\' ) || exit;
 	private static function table_to_array( $table ) {
 		preg_match_all( '/<tr>(.*?)<\/tr>/', $table, $lines );
 		if ( count( $lines ) > 1 ) {
-			$lines = $lines[1];
+			$lines = array_values( array_filter( $lines[1] ) );
 		} else {
 			$lines = array();
 		}
@@ -349,17 +407,42 @@ defined( \'ABSPATH\' ) || exit;
 		$lines = array_values( $lines );
 
 		$array = array();
-		foreach ( $heading as $i => $title ) {
-			$values = array();
-			foreach ( $lines as $line ) {
-				$values[] = $line[ $i ];
+		foreach ( $lines as $cols ) {
+			$col = array();
+			foreach ( $cols as $c => $value ) {
+				if ( 'Localidade' === $heading[ $c ] ) {
+					$value = utf8_encode( $value );
+				}
+				$col[ $c ] = array(
+					'column' => $heading[ $c ],
+					'value'  => $value,
+				);
 			}
-			$array[] = array(
-				'column' => $title,
-				'values' => $values,
-			);
+			$array[] = $col;
 		}
 		return $array;
+	}
+
+	/**
+	 * Count number of cities.
+	 */
+	public static function cities_count() {
+		global $wp_filesystem;
+
+		$file = 'i18n/cities/br.php';
+
+		if ( ! $wp_filesystem->is_file( F9BRCITIES_ABSPATH . $file ) ) {
+			self::generate_cities();
+		}
+
+		$cities = apply_filters( 'brcities_cities', include f9brcities()->file_path( $file ) );
+
+		$count = 0;
+		foreach ( array_keys( $cities['BR'] ) as $uf ) {
+			$count += count( $cities['BR'][ $uf ] );
+		}
+
+		WP_CLI::success( sprintf( '%d cities.', $count ) );
 	}
 
 	/**
@@ -377,31 +460,25 @@ defined( \'ABSPATH\' ) || exit;
 		$cities = apply_filters( 'brcities_cities', include f9brcities()->file_path( $file ) );
 
 		foreach ( array_keys( $cities['BR'] ) as $uf ) {
-			$uf = 'SC';
 			foreach ( $cities['BR'][ $uf ] as $city ) {
-				$city = 'Joinville';
-				$city = html_entity_decode( $city );
+				$tables = self::get_cep_range_data( $uf, $city );
+				foreach ( $tables as $table ) {
+					$array = self::table_to_array( $table );
 
-				$response = wp_remote_post(
-					'http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaFaixaCEP.cfm',
-					array(
-						'timeout' => 45,
-						'body'    => array(
-							'UF'         => $uf,
-							'Localidade' => $city,
-						),
-					)
-				);
+					$logger  = wc_get_logger();
+					$context = array( 'source' => 'brcities-cep-ranges' );
 
-				if ( ! is_wp_error( $response ) ) {
-					$tables = self::extract_tables( $response['body'] );
-					// foreach ( $tables as $table ) {
-					// 	// print_r( self::table_to_array( $table ) );
-					// }
+					$pairs = '';
+					foreach ( $array as $item ) {
+						foreach ( $item as $attr ) {
+							$pairs .= join( ':', array_values( $attr ) ) . "\n";
+						}
+					}
+					$pairs .= "\n";
+
+					$logger->debug( $pairs, $context );
 				}
-				break;
 			}
-			break;
 		}
 
 		WP_CLI::success( 'File generated.' );

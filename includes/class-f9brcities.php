@@ -105,4 +105,15 @@ final class F9brcities {
 			include_once F9BRCITIES_ABSPATH . 'includes/class-f9brcities-cli.php';
 		}
 	}
+
+	/**
+	 * Path of a file in plugin.
+	 *
+	 * @param  string $file Optional. File to search for in the plugin directory.
+	 * @return string
+	 */
+	public function file_path( $file = '' ) {
+		$path = untrailingslashit( plugin_dir_path( F9BRCITIES_PLUGIN_FILE ) );
+		return $path . '/' . ltrim( $file, '/' );
+	}
 }

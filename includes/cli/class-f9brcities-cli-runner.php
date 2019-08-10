@@ -35,7 +35,15 @@ class F9BRCITIES_CLI_Runner {
 	 * Generates command information and tells WP CLI.
 	 */
 	private static function register_commands() {
-		WP_CLI::add_command( 'brcities generate', array( __CLASS__, 'generate' ) );
+		$commands = array(
+			'generate',
+			'cep-ranges',
+		);
+
+		foreach ( $commands as $command ) {
+			$function = str_replace( '-', '_', $command );
+			WP_CLI::add_command( 'brcities ' . $command, array( __CLASS__, $function ) );
+		}
 	}
 
 	/**
@@ -284,5 +292,118 @@ defined( \'ABSPATH\' ) || exit;
 			$file,
 			ob_get_clean()
 		);
+	}
+
+	/**
+	 * Cleanup table.
+	 *
+	 * @param  string $table Table HTML.
+	 * @return string
+	 */
+	private static function clean_table( $table ) {
+		$table = preg_replace( '/<\/?b>/', '', $table );
+		$table = preg_replace( '/<(\/?\w+)\s[^>]+>/', '<$1>', $table );
+		$table = str_replace( '<td> ', '<td>', $table );
+		return $table;
+	}
+
+	/**
+	 * Extract tables.
+	 *
+	 * @param  string $html Table content.
+	 * @return array
+	 */
+	private static function extract_tables( $html ) {
+		$html = preg_replace( '/\r|\n/', '', $html );
+		$html = preg_replace( '/(\>)\s*(\<)/m', '$1$2', $html );
+		$html = self::clean_table( $html );
+		$html = html_entity_decode( $html );
+		preg_match_all( '#<table[^>]*>.*?</table>#', $html, $tables );
+		return current( $tables );
+	}
+
+	/**
+	 * Table to array.
+	 *
+	 * @param  string $table Table content.
+	 * @return array
+	 */
+	private static function table_to_array( $table ) {
+		preg_match_all( '/<tr>(.*?)<\/tr>/', $table, $lines );
+		if ( count( $lines ) > 1 ) {
+			$lines = $lines[1];
+		} else {
+			$lines = array();
+		}
+		foreach ( $lines as &$line ) {
+			preg_match_all( '/<t\w>(.*?)<\/t\w>/', $line, $cols );
+			if ( count( $cols ) > 1 ) {
+				$cols = $cols[1];
+			} else {
+				$cols = array();
+			}
+			$line = $cols;
+		}
+		$heading = current( $lines );
+		unset( $lines[0] );
+		$lines = array_values( $lines );
+
+		$array = array();
+		foreach ( $heading as $i => $title ) {
+			$values = array();
+			foreach ( $lines as $line ) {
+				$values[] = $line[ $i ];
+			}
+			$array[] = array(
+				'column' => $title,
+				'values' => $values,
+			);
+		}
+		return $array;
+	}
+
+	/**
+	 * Generates file of brazilian cities cep ranges.
+	 */
+	public static function cep_ranges() {
+		global $wp_filesystem;
+
+		$file = 'i18n/cities/br.php';
+
+		if ( ! $wp_filesystem->is_file( F9BRCITIES_ABSPATH . $file ) ) {
+			self::generate_cities();
+		}
+
+		$cities = apply_filters( 'brcities_cities', include f9brcities()->file_path( $file ) );
+
+		foreach ( array_keys( $cities['BR'] ) as $uf ) {
+			$uf = 'SC';
+			foreach ( $cities['BR'][ $uf ] as $city ) {
+				$city = 'Joinville';
+				$city = html_entity_decode( $city );
+
+				$response = wp_remote_post(
+					'http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaFaixaCEP.cfm',
+					array(
+						'timeout' => 45,
+						'body'    => array(
+							'UF'         => $uf,
+							'Localidade' => $city,
+						),
+					)
+				);
+
+				if ( ! is_wp_error( $response ) ) {
+					$tables = self::extract_tables( $response['body'] );
+					// foreach ( $tables as $table ) {
+					// 	// print_r( self::table_to_array( $table ) );
+					// }
+				}
+				break;
+			}
+			break;
+		}
+
+		WP_CLI::success( 'File generated.' );
 	}
 }

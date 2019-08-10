@@ -5634,3 +5634,5 @@ $cities['BR']['TO'] = array(
 	'1722081' => __( 'Wanderl&acirc;ndia', 'f9brcities' ),
 	'1722107' => __( 'Xambio&aacute;', 'f9brcities' ),
 );
+
+return $cities;

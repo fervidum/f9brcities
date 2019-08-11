@@ -267,7 +267,7 @@ defined( \'ABSPATH\' ) || exit;
 			printf( "\n\$cities['BR']['%s'] = array(\n", esc_html( $state_cod ) );
 
 			foreach ( $state_cities as $city ) {
-				printf( "\t'%s' => __( '%s', 'f9brcities' ),\n", esc_html( $city->code ), esc_html( htmlentities2( $city->name ) ) );
+				printf( "\t%d => __( '%s', 'f9brcities' ),\n", esc_html( absint( $city->code ) ), esc_html( htmlentities2( $city->name ) ) );
 			}
 			if ( end( $brcities ) !== $state_cities ) {
 				echo ');';
@@ -462,21 +462,26 @@ defined( \'ABSPATH\' ) || exit;
 		foreach ( array_keys( $cities['BR'] ) as $uf ) {
 			foreach ( $cities['BR'][ $uf ] as $city ) {
 				$tables = self::get_cep_range_data( $uf, $city );
+				if ( ! is_array( $tables ) ) {
+					$tables = array();
+				}
 				foreach ( $tables as $table ) {
 					$array = self::table_to_array( $table );
 
-					$logger  = wc_get_logger();
-					$context = array( 'source' => 'brcities-cep-ranges' );
+					if ( 'yes' === get_option( 'brcities_debuger', 'no' ) ) {
+						$logger  = wc_get_logger();
+						$context = array( 'source' => 'brcities-cep-ranges' );
 
-					$pairs = '';
-					foreach ( $array as $item ) {
-						foreach ( $item as $attr ) {
-							$pairs .= join( ':', array_values( $attr ) ) . "\n";
+						$pairs = '';
+						foreach ( $array as $item ) {
+							foreach ( $item as $attr ) {
+								$pairs .= join( ':', array_values( $attr ) ) . "\n";
+							}
 						}
-					}
-					$pairs .= "\n";
+						$pairs .= "\n";
 
-					$logger->debug( $pairs, $context );
+						$logger->debug( $pairs, $context );
+					}
 				}
 			}
 		}

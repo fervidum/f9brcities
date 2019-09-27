@@ -1,0 +1,19 @@
+.dropdown-autocomplete {
+  border-radius: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 100%;
+  margin-top: -($input-border-width + 1);
+  border-color: $input-focus-border-color;
+  li {
+    @extend .dropdown-item;
+    padding-right: $btn-padding-x;
+    padding-left: $btn-padding-x;
+    cursor: default;
+
+    @include hover-focus {
+      color: color-yiq($primary);
+      @include gradient-bg($primary);
+    }
+  }
+}

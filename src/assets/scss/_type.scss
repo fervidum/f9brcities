@@ -1,0 +1,15 @@
+// stylelint-disable declaration-no-important, selector-list-comma-newline-after
+
+//
+// Headings
+//
+
+h1 {
+  margin-bottom: $headings-margin-bottom;
+  font-family: $headings-font-family;
+  @include font-size($h1-font-size);
+  font-weight: $headings-font-weight;
+  line-height: $headings-line-height;
+  text-align: center;
+  color: $headings-color;
+}
